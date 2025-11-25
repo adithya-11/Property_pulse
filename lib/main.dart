@@ -31,9 +31,6 @@ class PropertyPulseApp extends StatelessWidget {
   }
 }
 
-/* --------------------------------------------------------------------------
- * Splash Screen
- * ------------------------------------------------------------------------ */
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -85,10 +82,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
-/* --------------------------------------------------------------------------
- * Login & Signup (Dummy)
- * ------------------------------------------------------------------------ */
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController email = TextEditingController();
@@ -190,10 +183,6 @@ Widget _inputField(String label, TextEditingController c,
   );
 }
 
-/* --------------------------------------------------------------------------
- * Bottom Navigation
- * ------------------------------------------------------------------------ */
-
 class MainBottomNav extends StatefulWidget {
   @override
   State<MainBottomNav> createState() => _MainBottomNavState();
@@ -238,10 +227,6 @@ class _MainBottomNavState extends State<MainBottomNav> {
     });
   }
 }
-
-/* --------------------------------------------------------------------------
- * Property Model & Data
- * ------------------------------------------------------------------------ */
 
 class Property {
   final String id, title, location, type, image, description;
@@ -300,10 +285,6 @@ class PropertyDB {
     ];
   }
 }
-
-/* --------------------------------------------------------------------------
- * Home Screen (Search + Filters + List)
- * ------------------------------------------------------------------------ */
 
 class HomeScreen extends StatefulWidget {
   final List<Property> favorites;
@@ -610,10 +591,6 @@ String _formatPrice(int price) {
   return price.toString();
 }
 
-/* --------------------------------------------------------------------------
- * Details Screen
- * ------------------------------------------------------------------------ */
-
 class DetailsScreen extends StatelessWidget {
   final Property p;
   final bool isFav;
@@ -689,10 +666,6 @@ class DetailsScreen extends StatelessWidget {
   }
 }
 
-/* --------------------------------------------------------------------------
- * Favorites Screen
- * ------------------------------------------------------------------------ */
-
 class FavoritesScreen extends StatelessWidget {
   final List<Property> favorites;
 
@@ -734,10 +707,6 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
-
-/* --------------------------------------------------------------------------
- * Profile Screen
- * ------------------------------------------------------------------------ */
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen();
