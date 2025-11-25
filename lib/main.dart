@@ -23,6 +23,10 @@ class PropertyPulseApp extends StatelessWidget {
   }
 }
 
+/* ------------------------------------------------------------
+                    PHASE 2 — SPLASH SCREEN
+-------------------------------------------------------------*/
+
 class SplashScreen extends StatefulWidget {
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -76,6 +80,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
+/* ------------------------------------------------------------
+                    LOGIN SCREEN (DUMMY)
+-------------------------------------------------------------*/
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController email = TextEditingController();
@@ -104,19 +111,14 @@ class LoginScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => HomeScreen()),
+                  MaterialPageRoute(builder: (_) => MainBottomNav()),
                 );
               },
               child: const Text("Login"),
             ),
 
             TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => SignupScreen()),
-                );
-              },
+              onPressed: () {},
               child: const Text(
                 "Create an account",
                 style: TextStyle(color: Color(0xFFFFD700)),
@@ -129,47 +131,9 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class SignupScreen extends StatelessWidget {
-  final TextEditingController name = TextEditingController();
-  final TextEditingController email = TextEditingController();
-  final TextEditingController pass = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Sign Up")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _inputField("Full Name", name),
-            const SizedBox(height: 15),
-            _inputField("Email", email),
-            const SizedBox(height: 15),
-            _inputField("Password", pass, isPass: true),
-
-            const SizedBox(height: 25),
-
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFD700),
-                foregroundColor: Colors.black,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomeScreen()),
-                );
-              },
-              child: const Text("Create Account"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+/* ------------------------------------------------------------
+                  INPUT FIELD COMPONENT
+-------------------------------------------------------------*/
 
 Widget _inputField(String label, TextEditingController controller,
     {bool isPass = false}) {
@@ -190,6 +154,61 @@ Widget _inputField(String label, TextEditingController controller,
   );
 }
 
+/* ------------------------------------------------------------
+             PHASE 3 — BOTTOM NAVIGATION CONTROLLER
+-------------------------------------------------------------*/
+
+class MainBottomNav extends StatefulWidget {
+  @override
+  State<MainBottomNav> createState() => _MainBottomNavState();
+}
+
+class _MainBottomNavState extends State<MainBottomNav> {
+  int selectedIndex = 0;
+
+  List<Property> favoriteList = [];
+
+  @override
+  Widget build(BuildContext context) {
+    final screens = [
+      HomeScreen(onFavoriteToggle: toggleFavorite, favorites: favoriteList),
+      FavoritesScreen(favorites: favoriteList),
+      ProfileScreen(),
+    ];
+
+    return Scaffold(
+      body: screens[selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF101419),
+        selectedItemColor: const Color(0xFFFFD700),
+        unselectedItemColor: Colors.white70,
+        currentIndex: selectedIndex,
+        onTap: (index) => setState(() => selectedIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: "Favorites"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        ],
+      ),
+    );
+  }
+
+  void toggleFavorite(Property p) {
+    setState(() {
+      if (favoriteList.contains(p)) {
+        favoriteList.remove(p);
+      } else {
+        favoriteList.add(p);
+      }
+    });
+  }
+}
+
+/* ------------------------------------------------------------
+            PROPERTY MODEL + SAMPLE DATA (USA)
+-------------------------------------------------------------*/
+
 class Property {
   final String title;
   final String price;
@@ -208,25 +227,37 @@ class PropertyService {
   static List<Property> getProperties() {
     return [
       Property(
-          title: "Luxury Penthouse",
-          price: "\$1,200,000",
-          location: "New York, NY",
-          image: "https://via.placeholder.com/400"),
+        title: "Luxury Penthouse",
+        price: "\$1,200,000",
+        location: "New York, NY",
+        image: "https://via.placeholder.com/400",
+      ),
       Property(
-          title: "Modern 3BHK Condo",
-          price: "\$650,000",
-          location: "Los Angeles, CA",
-          image: "https://via.placeholder.com/400"),
+        title: "Modern 3BHK Condo",
+        price: "\$650,000",
+        location: "Los Angeles, CA",
+        image: "https://via.placeholder.com/400",
+      ),
       Property(
-          title: "Cozy Studio Apartment",
-          price: "\$220,000",
-          location: "Miami, FL",
-          image: "https://via.placeholder.com/400"),
+        title: "Cozy Studio Apartment",
+        price: "\$220,000",
+        location: "Miami, FL",
+        image: "https://via.placeholder.com/400",
+      ),
     ];
   }
 }
 
+/* ------------------------------------------------------------
+                   UPDATED HOME SCREEN (PHASE 3)
+-------------------------------------------------------------*/
+
 class HomeScreen extends StatelessWidget {
+  final List<Property> favorites;
+  final Function(Property) onFavoriteToggle;
+
+  HomeScreen({required this.onFavoriteToggle, required this.favorites});
+
   final properties = PropertyService.getProperties();
 
   @override
@@ -240,24 +271,139 @@ class HomeScreen extends StatelessWidget {
         itemCount: properties.length,
         itemBuilder: (context, index) {
           final p = properties[index];
+          final isFav = favorites.contains(p);
+
           return Card(
             margin: const EdgeInsets.all(10),
             color: const Color(0xFF14181F),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: Color(0xFFFFD700), width: 1),
             ),
             child: ListTile(
-              leading: Image.network(p.image, width: 60, fit: BoxFit.cover),
-              title: Text(p.title,
-                  style: const TextStyle(
-                      color: Color(0xFFFFD700),
-                      fontWeight: FontWeight.bold)),
-              subtitle: Text("${p.price} • ${p.location}",
-                  style: const TextStyle(color: Colors.white70)),
+              leading:
+                  Image.network(p.image, width: 60, fit: BoxFit.cover),
+              title: Text(
+                p.title,
+                style: const TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                "${p.price} • ${p.location}",
+                style: const TextStyle(color: Colors.white70),
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  isFav ? Icons.favorite : Icons.favorite_border,
+                  color: isFav ? Colors.redAccent : Colors.white70,
+                ),
+                onPressed: () => onFavoriteToggle(p),
+              ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/* ------------------------------------------------------------
+                    FAVORITES SCREEN (PHASE 3)
+-------------------------------------------------------------*/
+
+class FavoritesScreen extends StatelessWidget {
+  final List<Property> favorites;
+
+  FavoritesScreen({required this.favorites});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Favorites"),
+        centerTitle: true,
+      ),
+      body: favorites.isEmpty
+          ? const Center(
+              child: Text(
+                "No favorites added yet",
+                style: TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontSize: 18,
+                ),
+              ),
+            )
+          : ListView.builder(
+              itemCount: favorites.length,
+              itemBuilder: (context, index) {
+                final p = favorites[index];
+
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  color: const Color(0xFF14181F),
+                  child: ListTile(
+                    leading: Image.network(p.image, width: 60),
+                    title: Text(
+                      p.title,
+                      style: const TextStyle(
+                        color: Color(0xFFFFD700),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "${p.price} • ${p.location}",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+/* ------------------------------------------------------------
+                     PROFILE SCREEN (PHASE 3)
+-------------------------------------------------------------*/
+
+class ProfileScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Profile"),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: const [
+            CircleAvatar(
+              radius: 45,
+              backgroundColor: Color(0xFFFFD700),
+              child: Icon(Icons.person, size: 60, color: Colors.black),
+            ),
+            SizedBox(height: 15),
+            Text(
+              "John Doe",
+              style: TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "johndoe@example.com",
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+            SizedBox(height: 30),
+            Text(
+              "Edit Profile (UI only)",
+              style: TextStyle(color: Colors.blueAccent),
+            ),
+          ],
+        ),
       ),
     );
   }
