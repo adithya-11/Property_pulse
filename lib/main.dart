@@ -15,31 +15,188 @@ class PropertyPulseApp extends StatelessWidget {
         primaryColor: Colors.blueAccent,
         colorScheme: const ColorScheme.dark(
           primary: Colors.blueAccent,
-          secondary: Color(0xFFFFD700), // Gold
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF101419),
-          titleTextStyle: TextStyle(
-            color: Color(0xFFFFD700),
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+          secondary: Color(0xFFFFD700),
         ),
       ),
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }
 
+class SplashScreen extends StatefulWidget {
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  double opacity = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() => opacity = 1);
+    });
+
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: AnimatedOpacity(
+          opacity: opacity,
+          duration: const Duration(seconds: 2),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.house_rounded,
+                  color: Color(0xFFFFD700), size: 90),
+              SizedBox(height: 20),
+              Text(
+                "PropertyPulse",
+                style: TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class LoginScreen extends StatelessWidget {
+  final TextEditingController email = TextEditingController();
+  final TextEditingController pass = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Login")),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            _inputField("Email", email),
+            const SizedBox(height: 15),
+            _inputField("Password", pass, isPass: true),
+
+            const SizedBox(height: 25),
+
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFD700),
+                foregroundColor: Colors.black,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => HomeScreen()),
+                );
+              },
+              child: const Text("Login"),
+            ),
+
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => SignupScreen()),
+                );
+              },
+              child: const Text(
+                "Create an account",
+                style: TextStyle(color: Color(0xFFFFD700)),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SignupScreen extends StatelessWidget {
+  final TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController pass = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Sign Up")),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            _inputField("Full Name", name),
+            const SizedBox(height: 15),
+            _inputField("Email", email),
+            const SizedBox(height: 15),
+            _inputField("Password", pass, isPass: true),
+
+            const SizedBox(height: 25),
+
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFD700),
+                foregroundColor: Colors.black,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => HomeScreen()),
+                );
+              },
+              child: const Text("Create Account"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget _inputField(String label, TextEditingController controller,
+    {bool isPass = false}) {
+  return TextField(
+    controller: controller,
+    obscureText: isPass,
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Color(0xFFFFD700)),
+      enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFFFFD700)),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.blueAccent),
+      ),
+    ),
+    style: const TextStyle(color: Colors.white),
+  );
+}
+
 class Property {
-  final int id;
   final String title;
   final String price;
   final String location;
   final String image;
 
   Property({
-    required this.id,
     required this.title,
     required this.price,
     required this.location,
@@ -51,32 +208,26 @@ class PropertyService {
   static List<Property> getProperties() {
     return [
       Property(
-        id: 1,
-        title: "Modern 2BHK Apartment",
-        price: "₹45,00,000",
-        location: "Bangalore, India",
-        image: "https://via.placeholder.com/400",
-      ),
+          title: "Luxury Penthouse",
+          price: "\$1,200,000",
+          location: "New York, NY",
+          image: "https://via.placeholder.com/400"),
       Property(
-        id: 2,
-        title: "Luxury Villa",
-        price: "₹1,20,00,000",
-        location: "Hyderabad, India",
-        image: "https://via.placeholder.com/400",
-      ),
+          title: "Modern 3BHK Condo",
+          price: "\$650,000",
+          location: "Los Angeles, CA",
+          image: "https://via.placeholder.com/400"),
       Property(
-        id: 3,
-        title: "Cozy 1BHK Studio",
-        price: "₹25,00,000",
-        location: "Delhi, India",
-        image: "https://via.placeholder.com/400",
-      ),
+          title: "Cozy Studio Apartment",
+          price: "\$220,000",
+          location: "Miami, FL",
+          image: "https://via.placeholder.com/400"),
     ];
   }
 }
 
 class HomeScreen extends StatelessWidget {
-  final List<Property> properties = PropertyService.getProperties();
+  final properties = PropertyService.getProperties();
 
   @override
   Widget build(BuildContext context) {
@@ -85,154 +236,28 @@ class HomeScreen extends StatelessWidget {
         title: const Text("PropertyPulse"),
         centerTitle: true,
       ),
-
-      body: Column(
-        children: [
-
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: TextField(
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "Search properties...",
-                hintStyle: const TextStyle(color: Colors.white54),
-                filled: true,
-                fillColor: const Color(0xFF1A1F27),
-                prefixIcon: const Icon(Icons.search, color: Color(0xFFFFD700)),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xFFFFD700)),
-                ),
-              ),
+      body: ListView.builder(
+        itemCount: properties.length,
+        itemBuilder: (context, index) {
+          final p = properties[index];
+          return Card(
+            margin: const EdgeInsets.all(10),
+            color: const Color(0xFF14181F),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0xFFFFD700), width: 1),
             ),
-          ),
-
-          SizedBox(
-            height: 50,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 12),
-              children: const [
-                FilterChipItem(label: "Apartment"),
-                FilterChipItem(label: "Villa"),
-                FilterChipItem(label: "Studio"),
-                FilterChipItem(label: "Luxury"),
-              ],
+            child: ListTile(
+              leading: Image.network(p.image, width: 60, fit: BoxFit.cover),
+              title: Text(p.title,
+                  style: const TextStyle(
+                      color: Color(0xFFFFD700),
+                      fontWeight: FontWeight.bold)),
+              subtitle: Text("${p.price} • ${p.location}",
+                  style: const TextStyle(color: Colors.white70)),
             ),
-          ),
-
-          const SizedBox(height: 10),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: properties.length,
-              itemBuilder: (context, index) {
-                final property = properties[index];
-
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PropertyDetailScreen(property: property),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    color: const Color(0xFF14181F),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: const BorderSide(
-                        color: Color(0xFFFFD700),
-                        width: 1,
-                      ),
-                    ),
-                    margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      leading: Image.network(
-                        property.image,
-                        width: 65,
-                        height: 65,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(
-                        property.title,
-                        style: const TextStyle(
-                          color: Color(0xFFFFD700),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(
-                        "${property.price} • ${property.location}",
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FilterChipItem extends StatelessWidget {
-  final String label;
-
-  const FilterChipItem({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 10),
-      child: Chip(
-        label: Text(label),
-        labelStyle: const TextStyle(color: Color(0xFFFFD700)),
-        backgroundColor: const Color(0xFF1A1F27),
-        side: const BorderSide(color: Color(0xFFFFD700)),
-      ),
-    );
-  }
-}
-
-class PropertyDetailScreen extends StatelessWidget {
-  final Property property;
-
-  const PropertyDetailScreen({required this.property});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(property.title),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(property.image, width: double.infinity, height: 220, fit: BoxFit.cover),
-
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              property.title,
-              style: const TextStyle(
-                fontSize: 24,
-                color: Color(0xFFFFD700),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "${property.price}\n${property.location}",
-              style: const TextStyle(fontSize: 16, color: Colors.white70),
-            ),
-          )
-        ],
+          );
+        },
       ),
     );
   }
