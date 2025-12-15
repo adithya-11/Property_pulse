@@ -6,13 +6,15 @@ void main() {
 }
 
 /*
-  Phase 6 - Single-file app
+  Phase 6 - Single-file app (modified)
   - Dark theme (Blue + Gold)
   - Splash -> Login (dummy) -> Mode Selection (every login)
   - Buyer Mode: BottomNav (Home, Favorites, Profile)
   - Seller Mode: Seller Dashboard (Add Property, My Listings, Profile)
   - Shared in-memory repository for properties using ValueNotifier
-  - Seller can add, edit, delete properties (image by URL)
+  - Seller can add, edit, delete properties
+  - Images removed; house emoji used instead
+  - Contact buttons added (UI-only)
 */
 
 class PropertyPulseApp extends StatelessWidget {
@@ -53,7 +55,7 @@ class Property {
   int price; // in USD
   String location;
   String type; // Apartment / Condo / Villa / Studio
-  String imageUrl; // can be empty
+  String imageUrl; // kept but not used in UI now
   String description;
   String ownerId; // simple owner marker; e.g., "seller_default"
 
@@ -101,7 +103,7 @@ class PropertyRepository {
         price: 1200000,
         location: "New York, NY",
         type: "Condo",
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Penthouse",
+        imageUrl: "",
         description: "Stunning penthouse in the heart of Manhattan.",
         ownerId: "system",
       ),
@@ -111,7 +113,7 @@ class PropertyRepository {
         price: 650000,
         location: "Los Angeles, CA",
         type: "Townhome",
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Townhome",
+        imageUrl: "",
         description: "Bright modern home close to downtown LA.",
         ownerId: "system",
       ),
@@ -121,17 +123,19 @@ class PropertyRepository {
         price: 220000,
         location: "Miami, FL",
         type: "Studio",
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Studio",
+        imageUrl: "",
         description: "Compact and comfortable studio apartment.",
         ownerId: "system",
       ),
     ];
   }
-  static final PropertyRepository _instance = PropertyRepository._privateConstructor();
+  static final PropertyRepository _instance =
+      PropertyRepository._privateConstructor();
   factory PropertyRepository() => _instance;
 
   // ValueNotifier so UI can listen to updates.
-  final ValueNotifier<List<Property>> _properties = ValueNotifier<List<Property>>([]);
+  final ValueNotifier<List<Property>> _properties =
+      ValueNotifier<List<Property>>([]);
 
   ValueNotifier<List<Property>> get propertiesNotifier => _properties;
 
@@ -144,7 +148,8 @@ class PropertyRepository {
   }
 
   void updateProperty(Property updated) {
-    final list = _properties.value.map((p) => p.id == updated.id ? updated : p).toList();
+    final list =
+        _properties.value.map((p) => p.id == updated.id ? updated : p).toList();
     _properties.value = list;
   }
 
@@ -168,9 +173,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 300), () => setState(() => opacity = 1));
+    Future.delayed(
+        const Duration(milliseconds: 300), () => setState(() => opacity = 1));
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => LoginScreen()));
     });
   }
 
@@ -186,7 +193,11 @@ class _SplashScreenState extends State<SplashScreen> {
             children: const [
               Icon(Icons.house_rounded, color: Color(0xFFFFD700), size: 84),
               SizedBox(height: 12),
-              Text("PropertyPulse", style: TextStyle(color: Color(0xFFFFD700), fontSize: 32, fontWeight: FontWeight.bold)),
+              Text("PropertyPulse",
+                  style: TextStyle(
+                      color: Color(0xFFFFD700),
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -220,17 +231,18 @@ class LoginScreen extends StatelessWidget {
                 minimumSize: const Size(double.infinity, 50),
               ),
               onPressed: () {
-                // go to ModeSelection every login (A)
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ModeSelectionScreen()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => ModeSelectionScreen()));
               },
               child: const Text("Login"),
             ),
             TextButton(
               onPressed: () {
-                // go to signup UI (dummy)
-                Navigator.push(context, MaterialPageRoute(builder: (_) => SignupScreen()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => SignupScreen()));
               },
-              child: const Text("Create an account", style: TextStyle(color: Color(0xFFFFD700))),
+              child: const Text("Create an account",
+                  style: TextStyle(color: Color(0xFFFFD700))),
             )
           ],
         ),
@@ -267,7 +279,8 @@ class SignupScreen extends StatelessWidget {
                 minimumSize: const Size(double.infinity, 48),
               ),
               onPressed: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ModeSelectionScreen()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => ModeSelectionScreen()));
               },
               child: const Text("Create Account"),
             ),
@@ -294,7 +307,8 @@ class ModeSelectionScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 12),
-            const Text("Choose how you want to use PropertyPulse", style: TextStyle(color: Colors.white70)),
+            const Text("Choose how you want to use PropertyPulse",
+                style: TextStyle(color: Colors.white70)),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: const Icon(Icons.search),
@@ -304,7 +318,8 @@ class ModeSelectionScreen extends StatelessWidget {
                 minimumSize: const Size.fromHeight(60),
               ),
               onPressed: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MainBottomNav()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => MainBottomNav()));
               },
             ),
             const SizedBox(height: 16),
@@ -316,16 +331,18 @@ class ModeSelectionScreen extends StatelessWidget {
                 minimumSize: const Size.fromHeight(60),
               ),
               onPressed: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SellerHome()));
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => SellerHome()));
               },
             ),
             const SizedBox(height: 24),
             TextButton(
               onPressed: () {
-                // back to login
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => LoginScreen()));
               },
-              child: const Text("Back to Login", style: TextStyle(color: Color(0xFFFFD700))),
+              child: const Text("Back to Login",
+                  style: TextStyle(color: Color(0xFFFFD700))),
             )
           ],
         ),
@@ -366,7 +383,8 @@ class _MainBottomNavState extends State<MainBottomNav> {
         onTap: (i) => setState(() => selectedIndex = i),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorites"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: "Favorites"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
@@ -403,14 +421,19 @@ class _BuyerHomeState extends State<BuyerHome> {
   String selectedType = "All";
   String priceFilter = "Any";
 
-  final locations = ["All", "New York, NY", "Los Angeles, CA", "Miami, FL", "Dallas, TX"];
+  final locations = [
+    "All",
+    "New York, NY",
+    "Los Angeles, CA",
+    "Miami, FL",
+    "Dallas, TX"
+  ];
   final types = ["All", "Condo", "Townhome", "Studio", "Villa"];
   final priceRanges = ["Any", "Low <300k", "Mid 300k-700k", "High >700k"];
 
   @override
   void initState() {
     super.initState();
-    // listen to repository updates
     shown = repo.properties;
     repo.propertiesNotifier.addListener(_onRepoUpdated);
   }
@@ -422,7 +445,7 @@ class _BuyerHomeState extends State<BuyerHome> {
   }
 
   void _onRepoUpdated() {
-    applyFilters(); // update shown list whenever data changes
+    applyFilters();
   }
 
   void applyFilters() {
@@ -432,11 +455,14 @@ class _BuyerHomeState extends State<BuyerHome> {
         final matchSearch = search.isEmpty ||
             p.title.toLowerCase().contains(search.toLowerCase()) ||
             p.location.toLowerCase().contains(search.toLowerCase());
-        final matchLocation = selectedLocation == "All" || p.location == selectedLocation;
+        final matchLocation =
+            selectedLocation == "All" || p.location == selectedLocation;
         final matchType = selectedType == "All" || p.type == selectedType;
         bool matchPrice = true;
         if (priceFilter == "Low <300k") matchPrice = p.price < 300000;
-        if (priceFilter == "Mid 300k-700k") matchPrice = p.price >= 300000 && p.price <= 700000;
+        if (priceFilter == "Mid 300k-700k") {
+          matchPrice = p.price >= 300000 && p.price <= 700000;
+        }
         if (priceFilter == "High >700k") matchPrice = p.price > 700000;
         return matchSearch && matchLocation && matchType && matchPrice;
       }).toList();
@@ -482,7 +508,9 @@ class _BuyerHomeState extends State<BuyerHome> {
                 prefixIcon: const Icon(Icons.search, color: Color(0xFFFFD700)),
                 filled: true,
                 fillColor: const Color(0xFF0F1418),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFFFD700))),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFFFFD700))),
               ),
               style: const TextStyle(color: Colors.white),
             ),
@@ -496,7 +524,9 @@ class _BuyerHomeState extends State<BuyerHome> {
                 Expanded(
                   child: DropdownButtonFormField(
                     value: priceFilter,
-                    items: priceRanges.map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
+                    items: priceRanges
+                        .map((p) => DropdownMenuItem(value: p, child: Text(p)))
+                        .toList(),
                     onChanged: (v) {
                       priceFilter = v.toString();
                       applyFilters();
@@ -509,7 +539,9 @@ class _BuyerHomeState extends State<BuyerHome> {
                 Expanded(
                   child: DropdownButtonFormField(
                     value: selectedLocation,
-                    items: locations.map((l) => DropdownMenuItem(value: l, child: Text(l))).toList(),
+                    items: locations
+                        .map((l) => DropdownMenuItem(value: l, child: Text(l)))
+                        .toList(),
                     onChanged: (v) {
                       selectedLocation = v.toString();
                       applyFilters();
@@ -539,7 +571,10 @@ class _BuyerHomeState extends State<BuyerHome> {
                   selectedColor: const Color(0xFF16202A),
                   backgroundColor: const Color(0xFF0F1418),
                   side: const BorderSide(color: Color(0xFFFFD700)),
-                  labelStyle: TextStyle(color: selected ? Colors.blueAccent : const Color(0xFFFFD700)),
+                  labelStyle: TextStyle(
+                      color: selected
+                          ? Colors.blueAccent
+                          : const Color(0xFFFFD700)),
                   onSelected: (_) {
                     selectedType = t;
                     applyFilters();
@@ -554,7 +589,9 @@ class _BuyerHomeState extends State<BuyerHome> {
 
           Expanded(
             child: shown.isEmpty
-                ? const Center(child: Text("No properties found", style: TextStyle(color: Color(0xFFFFD700))))
+                ? const Center(
+                    child: Text("No properties found",
+                        style: TextStyle(color: Color(0xFFFFD700))))
                 : ListView.builder(
                     padding: const EdgeInsets.only(bottom: 12),
                     itemCount: shown.length,
@@ -563,29 +600,109 @@ class _BuyerHomeState extends State<BuyerHome> {
                       final isFav = widget.favorites.any((f) => f.id == p.id);
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => PropertyDetailsScreen(property: p, isFav: isFav, onFavToggle: widget.onFavToggle)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => PropertyDetailsScreen(
+                                      property: p,
+                                      isFav: isFav,
+                                      onFavToggle: widget.onFavToggle)));
                         },
                         child: Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           color: const Color(0xFF14181F),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: const BorderSide(color: Color(0xFFFFD700), width: 1)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: const BorderSide(
+                                  color: Color(0xFFFFD700), width: 1)),
                           child: Row(
                             children: [
-                              ClipRRect(borderRadius: const BorderRadius.only(topLeft: Radius.circular(14), bottomLeft: Radius.circular(14)), child: Image.network(p.imageUrl, width: 140, height: 110, fit: BoxFit.cover)),
+                              // House emoji instead of image
+                              Container(
+                                width: 80,
+                                height: 80,
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF1A1F27),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(14),
+                                    bottomLeft: Radius.circular(14),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "🏠",
+                                  style: TextStyle(fontSize: 40),
+                                ),
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(8),
-                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                    Text(p.title, style: const TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 6),
-                                    Text("\$${_formatPrice(p.price)} • ${p.location}", style: const TextStyle(color: Colors.white70)),
-                                    const SizedBox(height: 6),
-                                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                                      Text(p.type, style: const TextStyle(color: Colors.white54)),
-                                      IconButton(icon: Icon(isFav ? Icons.favorite : Icons.favorite_border, color: isFav ? Colors.red : Colors.white70), onPressed: () => widget.onFavToggle(p)),
-                                    ]),
-                                  ]),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(p.title,
+                                            style: const TextStyle(
+                                                color: Color(0xFFFFD700),
+                                                fontWeight: FontWeight.bold)),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                            "\$${_formatPrice(p.price)} • ${p.location}",
+                                            style: const TextStyle(
+                                                color: Colors.white70)),
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(p.type,
+                                                style: const TextStyle(
+                                                    color: Colors.white54)),
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                TextButton.icon(
+                                                  onPressed: () {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              'Contacting seller for ${p.title}')),
+                                                    );
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.message,
+                                                    color: Color(0xFFFFD700),
+                                                    size: 18,
+                                                  ),
+                                                  label: const Text(
+                                                    'Contact',
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFFFFD700),
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(
+                                                      isFav
+                                                          ? Icons.favorite
+                                                          : Icons
+                                                              .favorite_border,
+                                                      color: isFav
+                                                          ? Colors.red
+                                                          : Colors.white70),
+                                                  onPressed: () =>
+                                                      widget.onFavToggle(p),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ]),
                                 ),
                               ),
                             ],
@@ -608,7 +725,11 @@ class PropertyDetailsScreen extends StatelessWidget {
   final bool isFav;
   final Function(Property) onFavToggle;
 
-  PropertyDetailsScreen({required this.property, required this.isFav, required this.onFavToggle, super.key});
+  PropertyDetailsScreen(
+      {required this.property,
+      required this.isFav,
+      required this.onFavToggle,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -617,31 +738,64 @@ class PropertyDetailsScreen extends StatelessWidget {
         title: Text(property.title),
         actions: [
           IconButton(
-            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border, color: isFav ? Colors.redAccent : Colors.white70),
+            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border,
+                color: isFav ? Colors.redAccent : Colors.white70),
             onPressed: () => onFavToggle(property),
           )
         ],
       ),
       body: ListView(
         children: [
-          Image.network(property.imageUrl, width: double.infinity, height: 220, fit: BoxFit.cover, errorBuilder: (_, __, ___) {
-            return Container(height: 220, color: const Color(0xFF1A1F27), child: const Center(child: Icon(Icons.photo, color: Colors.white30)));
-          }),
+          // House emoji header instead of image
+          Container(
+            height: 220,
+            color: const Color(0xFF1A1F27),
+            alignment: Alignment.center,
+            child: const Text(
+              "🏠",
+              style: TextStyle(fontSize: 80),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(property.title, style: const TextStyle(color: Color(0xFFFFD700), fontSize: 22, fontWeight: FontWeight.bold)),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(property.title,
+                  style: const TextStyle(
+                      color: Color(0xFFFFD700),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text("\$${_formatPrice(property.price)} • ${property.location}", style: const TextStyle(color: Colors.white70)),
+              Text("\$${_formatPrice(property.price)} • ${property.location}",
+                  style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 12),
-              Text(property.description, style: const TextStyle(color: Colors.white70, height: 1.4)),
+              Text(property.description,
+                  style: const TextStyle(color: Colors.white70, height: 1.4)),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 icon: const Icon(Icons.calendar_today),
-                label: const Text("Schedule Visit (UI Only)"),
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFD700), foregroundColor: Colors.black),
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Scheduling (UI-only)"))),
-              )
+                label: const Text("Schedule Visit"),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                    foregroundColor: Colors.black),
+                onPressed: () => ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text("Scheduling"))),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.message),
+                label: const Text("Contact Seller"),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                            Text("Contacting seller for ${property.title}")),
+                  );
+                },
+              ),
             ]),
           )
         ],
@@ -661,15 +815,22 @@ class FavoritesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Favorites")),
       body: favorites.isEmpty
-          ? const Center(child: Text("No favorites yet", style: TextStyle(color: Color(0xFFFFD700))))
+          ? const Center(
+              child: Text("No favorites yet",
+                  style: TextStyle(color: Color(0xFFFFD700))))
           : ListView.builder(
               itemCount: favorites.length,
               itemBuilder: (context, index) {
                 final p = favorites[index];
                 return ListTile(
-                  leading: Image.network(p.imageUrl, width: 60, height: 60, fit: BoxFit.cover),
-                  title: Text(p.title, style: const TextStyle(color: Color(0xFFFFD700))),
-                  subtitle: Text("\$${_formatPrice(p.price)} • ${p.location}", style: const TextStyle(color: Colors.white70)),
+                  leading: const Text(
+                    "🏠",
+                    style: TextStyle(fontSize: 32),
+                  ),
+                  title: Text(p.title,
+                      style: const TextStyle(color: Color(0xFFFFD700))),
+                  subtitle: Text("\$${_formatPrice(p.price)} • ${p.location}",
+                      style: const TextStyle(color: Colors.white70)),
                 );
               },
             ),
@@ -688,16 +849,26 @@ class BuyerProfileScreen extends StatelessWidget {
       appBar: AppBar(title: const Text("Profile")),
       body: Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const CircleAvatar(radius: 45, backgroundColor: Color(0xFFFFD700), child: Icon(Icons.person, size: 55, color: Colors.black)),
+          const CircleAvatar(
+              radius: 45,
+              backgroundColor: Color(0xFFFFD700),
+              child: Icon(Icons.person, size: 55, color: Colors.black)),
           const SizedBox(height: 12),
-          const Text("John Doe", style: TextStyle(color: Color(0xFFFFD700), fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text("John Doe",
+              style: TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
-          const Text("johndoe@example.com", style: TextStyle(color: Colors.white70)),
+          const Text("johndoe@example.com",
+              style: TextStyle(color: Colors.white70)),
           const SizedBox(height: 18),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1A75FF)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1A75FF)),
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => LoginScreen()));
             },
             child: const Text("Logout"),
           )
@@ -740,7 +911,8 @@ class _SellerHomeState extends State<SellerHome> {
         onTap: (i) => setState(() => index = i),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
-          BottomNavigationBarItem(icon: Icon(Icons.view_list), label: "My Listings"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.view_list), label: "My Listings"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
@@ -754,7 +926,8 @@ class SellerAddPropertyScreen extends StatefulWidget {
   SellerAddPropertyScreen({super.key});
 
   @override
-  State<SellerAddPropertyScreen> createState() => _SellerAddPropertyScreenState();
+  State<SellerAddPropertyScreen> createState() =>
+      _SellerAddPropertyScreenState();
 }
 
 class _SellerAddPropertyScreenState extends State<SellerAddPropertyScreen> {
@@ -791,24 +964,27 @@ class _SellerAddPropertyScreenState extends State<SellerAddPropertyScreen> {
         price: int.tryParse(priceCtrl.text.trim()) ?? 0,
         location: locationCtrl.text.trim(),
         type: typeCtrl.text.trim().isEmpty ? "Other" : typeCtrl.text.trim(),
-        imageUrl: imageCtrl.text.trim().isEmpty ? "https://via.placeholder.com/600x400.png?text=Image" : imageCtrl.text.trim(),
+        imageUrl: "", // not used in UI now
         description: descCtrl.text.trim(),
-        ownerId: "seller_default", // in real app this should be actual user id
+        ownerId: "seller_default",
       );
       repo.addProperty(p);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Property added')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Property added')));
       _resetForm();
     } else {
       final updated = editing!.copyWith(
         title: titleCtrl.text.trim(),
         price: int.tryParse(priceCtrl.text.trim()) ?? editing!.price,
         location: locationCtrl.text.trim(),
-        type: typeCtrl.text.trim().isEmpty ? editing!.type : typeCtrl.text.trim(),
-        imageUrl: imageCtrl.text.trim().isEmpty ? editing!.imageUrl : imageCtrl.text.trim(),
+        type:
+            typeCtrl.text.trim().isEmpty ? editing!.type : typeCtrl.text.trim(),
+        imageUrl: editing!.imageUrl,
         description: descCtrl.text.trim(),
       );
       repo.updateProperty(updated);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Property updated')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Property updated')));
       _resetForm();
     }
   }
@@ -832,35 +1008,55 @@ class _SellerAddPropertyScreenState extends State<SellerAddPropertyScreen> {
       child: Form(
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(editing == null ? "Add New Property" : "Edit Property", style: const TextStyle(color: Color(0xFFFFD700), fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(editing == null ? "Add New Property" : "Edit Property",
+              style: const TextStyle(
+                  color: Color(0xFFFFD700),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextFormField(
             controller: titleCtrl,
             decoration: _fieldDecoration("Title"),
-            validator: (v) => v == null || v.trim().isEmpty ? "Enter title" : null,
+            validator: (v) =>
+                v == null || v.trim().isEmpty ? "Enter title" : null,
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: priceCtrl,
             decoration: _fieldDecoration("Price (USD)"),
             keyboardType: TextInputType.number,
-            validator: (v) => v == null || v.trim().isEmpty ? "Enter price" : null,
+            validator: (v) =>
+                v == null || v.trim().isEmpty ? "Enter price" : null,
           ),
           const SizedBox(height: 8),
-          TextFormField(controller: locationCtrl, decoration: _fieldDecoration("Location"), validator: (v) => v == null || v.trim().isEmpty ? "Enter location" : null),
+          TextFormField(
+              controller: locationCtrl,
+              decoration: _fieldDecoration("Location"),
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? "Enter location" : null),
           const SizedBox(height: 8),
-          TextFormField(controller: typeCtrl, decoration: _fieldDecoration("Type (Condo / Villa / Studio)")),
+          TextFormField(
+              controller: typeCtrl,
+              decoration: _fieldDecoration("Type (Condo / Villa / Studio)")),
           const SizedBox(height: 8),
-          TextFormField(controller: imageCtrl, decoration: _fieldDecoration("Image URL (optional)")),
+          // imageCtrl kept but not used in UI, can be removed later
+          TextFormField(
+              controller: imageCtrl,
+              decoration: _fieldDecoration("Image URL (optional)")),
           const SizedBox(height: 8),
-          TextFormField(controller: descCtrl, decoration: _fieldDecoration("Description"), maxLines: 4),
+          TextFormField(
+              controller: descCtrl,
+              decoration: _fieldDecoration("Description"),
+              maxLines: 4),
           const SizedBox(height: 12),
           Row(
             children: [
               ElevatedButton.icon(
                 icon: const Icon(Icons.save),
                 label: Text(editing == null ? "Add Property" : "Save Changes"),
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFD700), foregroundColor: Colors.black),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                    foregroundColor: Colors.black),
                 onPressed: _submit,
               ),
               const SizedBox(width: 12),
@@ -871,15 +1067,18 @@ class _SellerAddPropertyScreenState extends State<SellerAddPropertyScreen> {
                     setState(() {});
                   },
                   child: const Text("Cancel"),
-                  style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFFFD700))),
+                  style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFFFD700))),
                 )
             ],
           ),
           const SizedBox(height: 20),
           const Divider(color: Colors.white12),
           const SizedBox(height: 12),
-          const Text("Tip: After adding a property, switch to Buyer mode to see it listed.", style: TextStyle(color: Colors.white70)),
-          const SizedBox(height: 200), // leave space
+          const Text(
+              "Tip: After adding a property, switch to Buyer mode to see it listed.",
+              style: TextStyle(color: Colors.white70)),
+          const SizedBox(height: 200),
         ]),
       ),
     );
@@ -914,8 +1113,8 @@ class _SellerListingsScreenState extends State<SellerListingsScreen> {
 
   void _onRepoUpdate() {
     setState(() {
-      // simple owner filter: ownerId == "seller_default"
-      myListings = repo.properties.where((p) => p.ownerId == "seller_default").toList();
+      myListings =
+          repo.properties.where((p) => p.ownerId == "seller_default").toList();
     });
   }
 
@@ -926,12 +1125,15 @@ class _SellerListingsScreenState extends State<SellerListingsScreen> {
         title: const Text("Delete listing?"),
         content: const Text("This will remove the listing locally."),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel")),
           TextButton(
             onPressed: () {
               repo.removeProperty(p.id);
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Listing removed")));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Listing removed")));
             },
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
           )
@@ -941,8 +1143,6 @@ class _SellerListingsScreenState extends State<SellerListingsScreen> {
   }
 
   void _edit(Property p) {
-    // go to SellerAddPropertyScreen and prefill by pushing it with edit param.
-    // For simplicity in a single file, we'll open a dialog that allows quick edit of title & price.
     showDialog(
       context: context,
       builder: (_) {
@@ -954,20 +1154,34 @@ class _SellerListingsScreenState extends State<SellerListingsScreen> {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: "Title")),
-                TextField(controller: priceCtrl, decoration: const InputDecoration(labelText: "Price (USD)"), keyboardType: TextInputType.number),
-                TextField(controller: descCtrl, decoration: const InputDecoration(labelText: "Description"), maxLines: 3),
+                TextField(
+                    controller: titleCtrl,
+                    decoration: const InputDecoration(labelText: "Title")),
+                TextField(
+                    controller: priceCtrl,
+                    decoration: const InputDecoration(labelText: "Price (USD)"),
+                    keyboardType: TextInputType.number),
+                TextField(
+                    controller: descCtrl,
+                    decoration: const InputDecoration(labelText: "Description"),
+                    maxLines: 3),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel")),
             TextButton(
               onPressed: () {
-                final updated = p.copyWith(title: titleCtrl.text.trim(), price: int.tryParse(priceCtrl.text.trim()) ?? p.price, description: descCtrl.text.trim());
+                final updated = p.copyWith(
+                    title: titleCtrl.text.trim(),
+                    price: int.tryParse(priceCtrl.text.trim()) ?? p.price,
+                    description: descCtrl.text.trim());
                 repo.updateProperty(updated);
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Listing updated")));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Listing updated")));
               },
               child: const Text("Save"),
             )
@@ -980,7 +1194,9 @@ class _SellerListingsScreenState extends State<SellerListingsScreen> {
   @override
   Widget build(BuildContext context) {
     return myListings.isEmpty
-        ? const Center(child: Text("You have no listings yet", style: TextStyle(color: Color(0xFFFFD700))))
+        ? const Center(
+            child: Text("You have no listings yet",
+                style: TextStyle(color: Color(0xFFFFD700))))
         : ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: myListings.length,
@@ -989,14 +1205,24 @@ class _SellerListingsScreenState extends State<SellerListingsScreen> {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 color: const Color(0xFF14181F),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
-                  leading: Image.network(p.imageUrl, width: 80, height: 60, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(width: 80, height: 60, color: const Color(0xFF1A1F27), child: const Icon(Icons.photo, color: Colors.white30))),
-                  title: Text(p.title, style: const TextStyle(color: Color(0xFFFFD700))),
-                  subtitle: Text("\$${_formatPrice(p.price)} • ${p.location}", style: const TextStyle(color: Colors.white70)),
+                  leading: const Text(
+                    "🏠",
+                    style: TextStyle(fontSize: 32),
+                  ),
+                  title: Text(p.title,
+                      style: const TextStyle(color: Color(0xFFFFD700))),
+                  subtitle: Text("\$${_formatPrice(p.price)} • ${p.location}",
+                      style: const TextStyle(color: Colors.white70)),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    IconButton(icon: const Icon(Icons.edit, color: Colors.white70), onPressed: () => _edit(p)),
-                    IconButton(icon: const Icon(Icons.delete, color: Colors.redAccent), onPressed: () => _delete(p)),
+                    IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.white70),
+                        onPressed: () => _edit(p)),
+                    IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.redAccent),
+                        onPressed: () => _delete(p)),
                   ]),
                 ),
               );
@@ -1014,15 +1240,25 @@ class SellerProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const CircleAvatar(radius: 45, backgroundColor: Color(0xFFFFD700), child: Icon(Icons.store, size: 56, color: Colors.black)),
+        const CircleAvatar(
+            radius: 45,
+            backgroundColor: Color(0xFFFFD700),
+            child: Icon(Icons.store, size: 56, color: Colors.black)),
         const SizedBox(height: 12),
-        const Text("Seller Account", style: TextStyle(color: Color(0xFFFFD700), fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text("Seller Account",
+            style: TextStyle(
+                color: Color(0xFFFFD700),
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
-        const Text("seller@example.com", style: TextStyle(color: Colors.white70)),
+        const Text("seller@example.com",
+            style: TextStyle(color: Colors.white70)),
         const SizedBox(height: 16),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1A75FF)),
-          onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A75FF)),
+          onPressed: () => Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => LoginScreen())),
           child: const Text("Logout"),
         )
       ]),
@@ -1036,7 +1272,8 @@ InputDecoration _fieldDecoration(String label) {
   return InputDecoration(
     labelText: label,
     labelStyle: const TextStyle(color: Color(0xFFFFD700)),
-    enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFFFD700))),
+    enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFFFFD700))),
     filled: true,
     fillColor: const Color(0xFF111417),
   );
@@ -1046,21 +1283,25 @@ InputDecoration _filterDecoration(String label) {
   return InputDecoration(
     labelText: label,
     labelStyle: const TextStyle(color: Color(0xFFFFD700)),
-    enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFFFD700))),
+    enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFFFFD700))),
     filled: true,
     fillColor: const Color(0xFF0F1418),
   );
 }
 
-Widget _inputField(String label, TextEditingController controller, {bool isPass = false}) {
+Widget _inputField(String label, TextEditingController controller,
+    {bool isPass = false}) {
   return TextField(
     controller: controller,
     obscureText: isPass,
     decoration: InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(color: Color(0xFFFFD700)),
-      enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFFFD700))),
-      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
+      enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFFFFD700))),
+      focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueAccent)),
       fillColor: const Color(0xFF111417),
       filled: true,
     ),
