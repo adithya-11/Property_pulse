@@ -1,0 +1,4 @@
+AI helped identify missing packages (like uuid) and explained how to correctly add them to pubspec.yaml or remove constant misuse.
+AI explained errors such as “Not a constant expression”, null check operator errors, and widget lifecycle issues, and provided corrected code.
+AI helped refactor logic (state handling, navigation flow, repository pattern) to avoid crashes and improve app stability.
+AI explained confusing topics like assets vs JSON, single-file apps, wireframes, ValueNotifier usage, and theme configuration in simple terms.
